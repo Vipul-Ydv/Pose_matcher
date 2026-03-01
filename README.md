@@ -20,8 +20,8 @@ This application strictly compares your live pose ensuring you match a reference
 
 ## Controls
 
--   **'q'**: Quit the application.
--   **'c'**: Capture the current live frame as the new reference pose.
+-   **'Q'**: Quit the application.
+-   **'C'**: Capture the current live frame as the new reference pose.
 
 ## How It Works
 
