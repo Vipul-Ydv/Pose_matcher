@@ -1,7 +1,4 @@
-import { Pose } from '@mediapipe/pose';
-import { Camera } from '@mediapipe/camera_utils';
-import { drawConnectors, drawLandmarks } from '@mediapipe/drawing_utils';
-import { POSE_CONNECTIONS } from '@mediapipe/pose';
+const { Pose, POSE_CONNECTIONS, Camera, drawConnectors, drawLandmarks } = window;
 import { detectHandActivity, normalizeKeypoints, calculateSimilarity } from './poseUtils';
 import './style.css';
 
