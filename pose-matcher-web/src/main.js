@@ -74,7 +74,8 @@ function onResults(results) {
       
       // Save canvas to image and show it
       const dataUrl = getCleanImage(results.image, canvasElement.width, canvasElement.height);
-      document.getElementById('no-ref-placeholder').style.display = 'none';
+      const placeholder = document.getElementById('no-ref-placeholder');
+      if (placeholder) placeholder.style.display = 'none';
       referenceContainer.innerHTML = `<img src="${dataUrl}" class="ref-snapshot" />`;
       
       appStatus.innerText = "Tracking! Match the target pose.";
