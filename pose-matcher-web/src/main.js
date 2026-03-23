@@ -73,7 +73,7 @@ function onResults(results) {
       referencePose = normalizeKeypoints(lms, useHands);
       
       // Save canvas to image and show it
-      const dataUrl = canvasElement.toDataURL('image/png');
+      const dataUrl = getCleanImage(results.image, canvasElement.width, canvasElement.height);
       document.getElementById('no-ref-placeholder').style.display = 'none';
       referenceContainer.innerHTML = `<img src="${dataUrl}" class="ref-snapshot" />`;
       
@@ -95,7 +95,7 @@ function onResults(results) {
         if (score > 0.85 && !matchCooldown) {
           isMatched = true;
           matchCelebration.classList.add('active');
-          const dataUrl = canvasElement.toDataURL('image/png');
+          const dataUrl = getCleanImage(results.image, canvasElement.width, canvasElement.height);
 
           const downloadBtn = document.getElementById('download-match-btn');
           if (downloadBtn) {
@@ -145,3 +145,14 @@ continueBtn.addEventListener('click', () => {
     matchCooldown = true;
     setTimeout(() => { matchCooldown = false; }, 2000);
 });
+
+function getCleanImage(imageSource, width, height) {
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = width;
+    tempCanvas.height = height;
+    const tempCtx = tempCanvas.getContext('2d');
+    tempCtx.translate(width, 0);
+    tempCtx.scale(-1, 1);
+    tempCtx.drawImage(imageSource, 0, 0, width, height);
+    return tempCanvas.toDataURL('image/png');
+}
