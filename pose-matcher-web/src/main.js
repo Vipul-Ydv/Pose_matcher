@@ -19,6 +19,9 @@ let useHands = false;
 let isMatched = false;
 let isCapturing = false;
 let matchCooldown = false;
+let holdStartTime = 0;
+let holdingPose = false;
+let lastSpoken = 0;
 
 // MediaPipe Setup
 const pose = new Pose({locateFile: (file) => {
@@ -94,22 +97,49 @@ function onResults(results) {
         updateScoreUI(score);
 
         if (score > 0.85 && !matchCooldown) {
-          isMatched = true;
-          matchCelebration.classList.add('active');
-          const dataUrl = getCleanImage(results.image, canvasElement.width, canvasElement.height);
+            if (!holdingPose) {
+                holdingPose = true;
+                holdStartTime = Date.now();
+                lastSpoken = 3;
+                speak("3");
+                appStatus.innerText = "Hold it! 3...";
+            } else {
+                const heldTime = Date.now() - holdStartTime;
+                if (heldTime > 1000 && lastSpoken === 3) {
+                    lastSpoken = 2;
+                    speak("2");
+                    appStatus.innerText = "Hold it! 2...";
+                } else if (heldTime > 2000 && lastSpoken === 2) {
+                    lastSpoken = 1;
+                    speak("1");
+                    appStatus.innerText = "Hold it! 1...";
+                } else if (heldTime > 3000) {
+                    holdingPose = false;
+                    lastSpoken = 0;
+                    speak("Match!");
+                    isMatched = true;
+                    matchCelebration.classList.add('active');
+                    const dataUrl = getCleanImage(results.image, canvasElement.width, canvasElement.height);
 
-          const downloadBtn = document.getElementById('download-match-btn');
-          if (downloadBtn) {
-              downloadBtn.href = dataUrl;
-              downloadBtn.style.display = 'flex';
-          }
+                    const downloadBtn = document.getElementById('download-match-btn');
+                    if (downloadBtn) {
+                        downloadBtn.href = dataUrl;
+                        downloadBtn.style.display = 'flex';
+                    }
 
-          document.getElementById('history-container').innerHTML = 
-            `<div class="history-item slideUp">
-              <img src="${dataUrl}" alt="Matched Pose">
-              <div class="label">SUCCESS</div>
-              <a href="${dataUrl}" download="pose-match.png" style="position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.8); color: white; padding: 0.3rem 0.6rem; border-radius: 4px; text-decoration: none; font-size: 0.8rem; z-index: 10;">⬇️ Save</a>
-            </div>`;
+                    document.getElementById('history-container').innerHTML = 
+                        `<div class="history-item slideUp">
+                        <img src="${dataUrl}" alt="Matched Pose">
+                        <div class="label">SUCCESS</div>
+                        <a href="${dataUrl}" download="pose-match.png" style="position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.8); color: white; padding: 0.3rem 0.6rem; border-radius: 4px; text-decoration: none; font-size: 0.8rem; z-index: 10;">⬇️ Save</a>
+                        </div>`;
+                }
+            }
+        } else if (holdingPose && score <= 0.85) {
+            holdingPose = false;
+            lastSpoken = 0;
+            appStatus.innerText = "Pose lost. Match the target pose.";
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
         }
       }
     } else if (!referencePose) {
@@ -156,4 +186,12 @@ function getCleanImage(imageSource, width, height) {
     tempCtx.scale(-1, 1);
     tempCtx.drawImage(imageSource, 0, 0, width, height);
     return tempCanvas.toDataURL('image/png');
+}
+
+function speak(text) {
+    if ('speechSynthesis' in window) {
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.rate = 1.2;
+        window.speechSynthesis.speak(msg);
+    }
 }
