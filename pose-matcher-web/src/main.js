@@ -18,6 +18,7 @@ let referencePose = null;
 let useHands = false;
 let isMatched = false;
 let isCapturing = false;
+let matchCooldown = false;
 
 // MediaPipe Setup
 const pose = new Pose({locateFile: (file) => {
@@ -80,6 +81,8 @@ function onResults(results) {
       appStatus.style.color = "var(--accent)";
       appStatus.style.borderColor = "var(--accent)";
       isMatched = false;
+      matchCooldown = true;
+      setTimeout(() => { matchCooldown = false; }, 2000);
     }
 
     // Match Logic
@@ -89,7 +92,7 @@ function onResults(results) {
         let score = calculateSimilarity(referencePose, currentPose, useHands);
         updateScoreUI(score);
 
-        if (score > 0.92) {
+        if (score > 0.85 && !matchCooldown) {
           isMatched = true;
           matchCelebration.classList.add('active');
           const dataUrl = canvasElement.toDataURL('image/png');
@@ -131,4 +134,6 @@ captureBtn.addEventListener('click', () => {
 continueBtn.addEventListener('click', () => {
     isMatched = false;
     matchCelebration.classList.remove('active');
+    matchCooldown = true;
+    setTimeout(() => { matchCooldown = false; }, 2000);
 });
