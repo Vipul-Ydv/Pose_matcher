@@ -96,10 +96,18 @@ function onResults(results) {
           isMatched = true;
           matchCelebration.classList.add('active');
           const dataUrl = canvasElement.toDataURL('image/png');
+
+          const downloadBtn = document.getElementById('download-match-btn');
+          if (downloadBtn) {
+              downloadBtn.href = dataUrl;
+              downloadBtn.style.display = 'flex';
+          }
+
           document.getElementById('history-container').innerHTML = 
             `<div class="history-item slideUp">
               <img src="${dataUrl}" alt="Matched Pose">
               <div class="label">SUCCESS</div>
+              <a href="${dataUrl}" download="pose-match.png" style="position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.8); color: white; padding: 0.3rem 0.6rem; border-radius: 4px; text-decoration: none; font-size: 0.8rem; z-index: 10;">⬇️ Save</a>
             </div>`;
         }
       }
