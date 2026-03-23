@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pose Matcher | Web</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app" class="app-container">
+        <!-- Header -->
+        <header>
+            <div class="logo">
+                <span class="icon">✨</span>
+                <h1>Pose Matcher Web</h1>
+            </div>
+            <div class="status-badge" id="app-status">Loading Camera...</div>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="workspace">
+            <!-- Left: Live Feed -->
+            <section class="camera-section card glass">
+                <div class="card-header">
+                    <h2>Live Feed</h2>
+                    <span class="pulse-indicator"></span>
+                </div>
+                <div class="video-container">
+                    <!-- Invisible webcam source -->
+                    <video id="webcam-video" style="display: none;" playsinline></video>
+                    <!-- Visible render canvas -->
+                    <canvas id="output-canvas"></canvas>
+
+                    <!-- Overlay Score -->
+                    <div class="score-overlay" id="score-overlay">
+                        <span class="score-value" id="score-text">0.0%</span>
+                        <div class="score-progress-bar">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                    </div>
+                    <!-- Match Celebration -->
+                    <div class="match-celebration" id="match-celebration">
+                        <h2>MATCHED! 🎉</h2>
+                        <button class="btn btn-primary" id="continue-btn">Continue</button>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn btn-capture" id="capture-btn">
+                        📸 Capture Live Pose as Reference
+                    </button>
+                </div>
+            </section>
+
+            <!-- Right: Reference panel -->
+            <section class="reference-section">
+                <!-- Current Reference Image -->
+                <div class="card glass">
+                    <div class="card-header">
+                        <h2>Target Reference</h2>
+                    </div>
+                    <div class="ref-container" id="reference-container">
+                        <div id="no-ref-placeholder" class="placeholder">
+                            <div class="placeholder-icon">🚶</div>
+                            <p>No Reference Set</p>
+                            <small>Review camera and capture.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Last Match Panel -->
+                <div class="card glass delay-anim">
+                    <div class="card-header">
+                        <h2>Match History</h2>
+                    </div>
+                    <div class="history-container" id="history-container">
+                        <div class="placeholder">
+                            <p>Match a pose to view history</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+</body>
+</html>
